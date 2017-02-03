@@ -1,0 +1,22 @@
+{
+  "name": "nodeexercises",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ar11rA/nodeExercises.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ar11rA/nodeExercises/issues"
+  },
+  "homepage": "https://github.com/Ar11rA/nodeExercises#readme",
+  "dependencies": {
+    "axios": "^0.15.3"
+  }
+}
