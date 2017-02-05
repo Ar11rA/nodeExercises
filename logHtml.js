@@ -10,6 +10,6 @@ getGoogle()
     console.log('\n\n\n')
     console.log('Facebook: ' + response.data);
   })
-  .catch(function (error) {
+  .catch((error) => {
     console.log(error);
   });
