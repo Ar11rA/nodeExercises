@@ -31,7 +31,7 @@ app.put('/update/:id', function (req, response) {
   const status = req.body.status
   if (status == null && !description) response.sendStatus(500)
   const updData = updateDb(id, description, status)
-  updData.then(() => response.send('Data updated'))
+  updData.then((id) => response.send(id))
   updData.catch(() => response.sendStatus(500))
 })
 app.delete('/destroy/:id', function (req, response) {
