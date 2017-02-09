@@ -1,0 +1,84 @@
+<html>
+
+<head>
+  <style>
+    table.taskTable {
+      border-collapse: collapse;
+      width: 50%;
+      align-content: center;
+      align-self: center;
+    }
+    
+    th,
+    td {
+      text-align: left;
+      padding: 8px;
+    }
+    
+    .desc-design {
+      width: 80%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      border: none;
+    }
+    
+    input[type=text]{
+      font-size: 14px;
+    }
+    #data,
+    #lineNumber,
+    #desc {
+      width: 40%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      box-sizing: border-box;
+    }
+
+    
+    td.checked {
+      background: #888;
+      color: #fff;
+      text-decoration: line-through;
+    }
+    
+    #descTable {
+      width: 100%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      display: inline-block;
+      border: none;
+      box-sizing: border-box;
+    }
+    
+    button,
+    input[type=button] {
+      background-color:white;
+      border: none;
+      color:black;
+      padding: 15px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 10px;
+    }
+  </style>
+</head>
+<center>
+<body onload="outputList()">
+  <h1>TODO Items</h1>
+  <div>
+    <input type="text" name="data" id="data" placeholder="What do you want to do?"> 
+    <input type="button" onclick="writeList()" value="➕"></input>
+  </div>
+  <br>
+  <hr>
+  <table style="width:50%" id="taskTable">
+  </table>
+  <br>
+  <hr>
+  <br>
+</body>
+</center>
+<script src="apiFetch.js"></script>
+
+</html>
