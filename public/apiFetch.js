@@ -111,7 +111,7 @@ function updateList(id) {
         </td>
         <td>
         <button id="${idTask}" type="button" onclick="deleteTask
-        (this.id)">❌</button>
+        (${idTask})">❌</button>
         </td>
         </tr>`
     })
@@ -120,9 +120,13 @@ function updateList(id) {
     })
 }
 function updateStatus(id) {
+  const listElement = document.getElementById(`${id}-desc-status`)
+  let description = document.getElementById(`${id}-desc`).value
   let status = document.getElementById(`${id}-chk`).value
   console.log(status)
   status = (status == 'false') ? true : false
+  let checked = status == true ? 'checked' : '\0'
+  
   let data = {
     status: status
   }
@@ -134,8 +138,23 @@ function updateStatus(id) {
       "Content-type": "application/json"
     }
   })
-    .then(() => {
-      return outputList()
+    .then((res) => {
+      return res.json()
+    })
+    .then((text) => {
+      const idTask = (text[0][0].id)
+      listElement.innerHTML = `<tr id='${idTask}-desc-status'>
+        <td>
+        <input class="desc-design" type='text' id='${idTask}-desc' value='${description}' onfocusout='updateList(${idTask})'></input>
+        </td>
+        <td>
+        <input type="checkbox" id="${idTask}-chk" value="${status}" onchange="updateStatus(${id})" ${checked}>
+        </td>
+        <td>
+        <button id="${idTask}" type="button" onclick="deleteTask
+        (${idTask})">❌</button>
+        </td>
+        </tr>`
     })
     .catch(function (err) {
       console.log(err)
