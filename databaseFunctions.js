@@ -2,7 +2,7 @@ const Sequelize = require('sequelize')
 const sequelize = new Sequelize('postgres://aritraaritra:@localhost:5432/apidb')
 
 function addToDb(description) {
-  let insertDb = sequelize.query(`insert into tasks values (\'${description}\',false)`, { raw: true, type: 'insert' })
+  let insertDb = sequelize.query(`insert into tasks values (\'${description}\',false) returning id`, { raw: true, type: 'insert' })
   return insertDb
 }
 

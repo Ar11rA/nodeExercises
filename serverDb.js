@@ -19,7 +19,7 @@ app.post('/write/:message', function (req, response) {
     response.sendStatus(500)
   }
   const addData = addToDb(data)
-  addData.then(() => response.send('Data added'))
+  addData.then((id) => response.send(id))
   addData.catch(() => response.sendStatus(500))
 })
 app.put('/update/:id', function (req, response) {

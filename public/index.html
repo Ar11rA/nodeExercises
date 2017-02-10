@@ -2,11 +2,29 @@
 
 <head>
   <style>
-    table.taskTable {
+    body {
+      font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background: #f5f5f5;
+      color: #4d4d4d;
+      font-weight: 300;
+    }
+    
+    h1 {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      position: absolute;
+      width: 100%;
+      font-size: 100px;
+      font-weight: 100;
+      text-align: center;
+      color: rgba(175, 47, 47, 0.15);
+    }
+    
+    #taskTable {
       border-collapse: collapse;
       width: 50%;
       align-content: center;
       align-self: center;
+      margin-top: 10px;
     }
     
     th,
@@ -20,23 +38,31 @@
       padding: 12px 20px;
       margin: 8px 0;
       border: none;
+      font-size: 18px;
     }
-    .striked{
+    
+    .striked {
       text-decoration: line-through;
-    }
-    input[type=text]{
-      font-size: 14px;
     }
     #data,
     #lineNumber,
     #desc {
-      width: 40%;
+      width: 80%;
       padding: 12px 20px;
-      margin: 8px 0;
+      margin-top: 60px;
       box-sizing: border-box;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      border-bottom: 1px solid #D3D3D3;
+      font-size:18px;
     }
-
-    
+    input::-webkit-input-placeholder {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: lighter;
+    font-size: 24px;
+    line-height: 3;
+}
     td.checked {
       background: #888;
       color: #fff;
@@ -52,34 +78,61 @@
       box-sizing: border-box;
     }
     
+    #container {
+      margin-top: 160px;
+      background-color: #fff;
+      box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 4px 0px, rgba(0, 0, 0, 0.0980392) 0px 25px 50px 0px;
+      width: 40%;
+      min-width: 400px;
+      min-height: 300px;
+    }
+    
     button,
     input[type=button] {
-      background-color:white;
+      background-color: white;
       border: none;
-      color:black;
+      color: black;
       padding: 15px 20px;
       text-align: center;
       text-decoration: none;
       display: inline-block;
       font-size: 10px;
     }
+    
+    tr.border-bottom td {
+      border-bottom: 1pt solid #D3D3D3;
+    }
+    
+    p {
+      display: block;
+      -webkit-margin-before: 1em;
+      -webkit-margin-after: 1em;
+      -webkit-margin-start: 0px;
+      -webkit-margin-end: 0px;
+      color: #bfbfbf;
+      font-size: 10px;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+      text-align: center;
+    }
   </style>
 </head>
 <center>
-<body onload="outputList()">
-  <h1>TODO Items</h1>
-  <div>
-    <input type="text" name="data" id="data" placeholder="What do you want to do?"> 
-    <input type="button" onclick="writeList()" value="➕"></input>
-  </div>
-  <br>
-  <hr>
-  <table style="width:50%" id="taskTable">
-  </table>
-  <br>
-  <hr>
-  <br>
-</body>
+
+  <body onload="outputList()">
+    <h1>TODO Items</h1><br><br>
+    <div id='container'>
+      <div>
+        <input type="text" name="data" id="data" placeholder="What do you want to do?">
+      </div>
+      <br>
+      <table style="width:50%" id="taskTable">
+      </table>
+      <br>
+    </div><br><br><br>
+    <p>Click on task to change details</p>
+    <p>Click on checkbox to change status</p>
+    <p>Click on cross to delete details</p>
+  </body>
 </center>
 <script src="apiFetch.js"></script>
 
