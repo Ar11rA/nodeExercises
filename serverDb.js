@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const {addToDb, displayData, updateDb, deleteFromDb} = require('./databaseFunctions')
+const {addToDb, displayData, updateDb, deleteFromDb, updateDbAll} = require('./databaseFunctions')
 app.use(express.static('public'))
 const bodyParser = require('body-parser')
 app.use(bodyParser.urlencoded({
@@ -45,5 +45,12 @@ app.delete('/destroy/:id', function (req, response) {
       response.send('Data Deleted')
   })
   delId.catch(() => response.sendStatus(500))
+})
+
+app.put('/updateAll/:status', function (req, response) {
+  const statusAll = req.params.status
+  const updData = updateDbAll(statusAll)
+  updData.then(() => response.send())
+  updData.catch(() => response.sendStatus(500))
 })
 app.listen(3010)

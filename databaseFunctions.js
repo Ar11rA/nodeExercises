@@ -32,12 +32,18 @@ function deleteFromDb(id) {
   const destroy = sequelize.query(query)
   return destroy
 }
+function updateDbAll(status) {
+  const query = `update tasks set status = '${status}'`
+  return sequelize.query(query)
+
+}
 
 module.exports = {
   addToDb,
   displayData,
   updateDb,
-  deleteFromDb
+  deleteFromDb,
+  updateDbAll
 }
 
 // const add = addToDb('new task 2')

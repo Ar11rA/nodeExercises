@@ -19,6 +19,16 @@
       color: rgba(175, 47, 47, 0.15);
     }
     
+    .btn {
+      visibility: hidden;
+      border: none;
+      background: transparent;
+    }
+    
+    tr:hover .btn {
+      visibility: visible;
+    }
+    
     #taskTable {
       border-collapse: collapse;
       width: 50%;
@@ -38,31 +48,39 @@
       padding: 12px 20px;
       margin: 8px 0;
       border: none;
-      font-size: 18px;
+      font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 20px;
+      font-weight: 150;
+      color: rgb(77, 77, 77)
     }
     
     .striked {
+      color: #d9d9d9;
       text-decoration: line-through;
     }
+    
     #data,
     #lineNumber,
     #desc {
       width: 80%;
-      padding: 12px 20px;
-      margin-top: 60px;
-      box-sizing: border-box;
+      margin-top: 20px;
       border: 0;
       outline: 0;
       background: transparent;
-      border-bottom: 1px solid #D3D3D3;
-      font-size:18px;
+      font-size: 25px;
+      margin-bottom: -20px;
+      padding-bottom: 25px;
+      font-style: italic;
+      font-weight: 100;
     }
+    
     input::-webkit-input-placeholder {
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      font-weight: lighter;
-    font-size: 24px;
-    line-height: 3;
-}
+      font-weight: 100;
+      font-size: 24px;
+      line-height: 3;
+    }
+    
     td.checked {
       background: #888;
       color: #fff;
@@ -72,7 +90,6 @@
     #descTable {
       width: 100%;
       padding: 12px 20px;
-      margin: 8px 0;
       display: inline-block;
       border: none;
       box-sizing: border-box;
@@ -81,10 +98,16 @@
     #container {
       margin-top: 160px;
       background-color: #fff;
-      box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 4px 0px, rgba(0, 0, 0, 0.0980392) 0px 25px 50px 0px;
-      width: 40%;
+      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 25px 50px 0 rgba(0, 0, 0, 0.1);
+      width: 35%;
       min-width: 400px;
       min-height: 300px;
+    }
+  
+    hr {
+      width: 100%;
+      border-color: #ffffff;
+      margin-top: -10px;
     }
     
     button,
@@ -119,17 +142,19 @@
 <center>
 
   <body onload="outputList()">
-    <h1>TODO Items</h1><br><br>
+    <h1>todos</h1><br><br>
     <div id='container'>
       <div>
+        <button onclick="updateAll()" type="button">🔽</button>
         <input type="text" name="data" id="data" placeholder="What do you want to do?">
       </div>
       <br>
-      <table style="width:50%" id="taskTable">
+      <hr>
+      <table style="width:100%" id="taskTable">
       </table>
       <br>
     </div><br><br><br>
-    <p>Click on task to change details</p>
+    <p>Double Click on task to change details</p>
     <p>Click on checkbox to change status</p>
     <p>Click on cross to delete details</p>
   </body>
