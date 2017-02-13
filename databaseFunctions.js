@@ -38,12 +38,19 @@ function updateDbAll(status) {
 
 }
 
+function deleteAllChecked() {
+  const query = `delete from tasks where status=true`
+  const destroy = sequelize.query(query)
+  return destroy
+}
+
 module.exports = {
   addToDb,
   displayData,
   updateDb,
   deleteFromDb,
-  updateDbAll
+  updateDbAll,
+  deleteAllChecked
 }
 
 // const add = addToDb('new task 2')

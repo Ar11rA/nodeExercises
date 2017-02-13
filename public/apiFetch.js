@@ -13,11 +13,18 @@ function escapeHtml(string) {
     return entityMap[s];
   });
 }
+let flag
+let idMap = []
 function enableText(obj) {
   obj.readOnly = ""
 }
-let idMap = []
-
+function renderHtml(todos) {
+  let htmlString = ''
+  todos.forEach((task) => {
+    htmlString += addToHtml(task)
+  })
+  return htmlString
+}
 function addToHtml(task) {
   let checked = task.status == true ? 'checked' : null
   console.log(checked)
@@ -39,20 +46,27 @@ let todos = []
 function istrue(obj) {
   return (obj.status == true)
 }
-function displayDone(){
-
+function checkflag() {
+  if (flag === 0) {
+    filterAll()
+  } else if (flag === 1) {
+    filterActive()
+  } else {
+    filterCompleted()
+  }
 }
+
 function outputList() {
   return fetch('/read', { method: 'get' })
     .then(function (response) {
       return response.json()
     })
     .then((tasks) => {
-      count = 0
+      flag = 0
       const listElement = document.getElementById('taskTable')
       listElement.innerHTML = ''
       tasks.forEach((task, index) => {
-        todos[count] = {
+        todos[index] = {
           id: task.id,
           description: task.description,
           status: task.status
@@ -61,11 +75,11 @@ function outputList() {
         let desc = escapeHtml(task.description)
         let status = escapeHtml(task.status)
         let checked = task.status == true ? 'checked' : null
-        listElement.innerHTML += addToHtml(todos[count])
-        idMap[count] = task.id
-        count = count + 1
-        console.log(todos)
+        idMap[index] = task.id
       })
+      console.log(todos)
+      checkflag()
+      updateCount()
     })
     .catch(function (err) {
       console.log(err)
@@ -75,7 +89,6 @@ document.getElementById('data').onkeydown = function (e) {
   if (e.keyCode === 13) {
     let description = document.getElementById('data').value
     let status = false
-    let listElement = document.getElementById('taskTable')
     fetch(`/write/${description}`, { method: 'post' })
       .then((response) => {
         return response.json()
@@ -84,8 +97,11 @@ document.getElementById('data').onkeydown = function (e) {
         id = text[0].id
         let objLength = todos.length
         let obj = { id, description, status }
-        todos[length] = { obj }
-        listElement.innerHTML += addToHtml(obj)
+        todos[objLength] = obj
+        console.log(todos)
+        checkflag()
+        updateCount()
+
       })
       .catch(function (err) {
         console.log(err)
@@ -109,7 +125,9 @@ function deleteTask(id) {
           delId = index
         }
         todos.splice(delId, 1)
+        console.log(todos)
       })
+      updateCount()
       listElement.parentNode.removeChild(listElement)
     })
     .catch(function (err) {
@@ -138,7 +156,8 @@ function updateList(id) {
     }
   })
     .then(() => {
-      listElement.innerHTML = addToHtml(taskObj)
+      checkflag()
+      updateCount()
     })
     .catch(function (err) {
       console.log(err)
@@ -146,6 +165,7 @@ function updateList(id) {
 }
 function updateStatus(id) {
   let listElement = document.getElementById(`${id}-desc-status`)
+  let listTable = document.getElementById('taskTable')
   let description = document.getElementById(`${id}-desc`).value
   let status = document.getElementById(`${id}-chk`).value
   status = (status == 'false') ? true : false
@@ -168,14 +188,39 @@ function updateStatus(id) {
   })
     .then(() => {
       listElement.innerHTML = addToHtml(taskObj)
+      updateCount()
+      switch (flag) {
+        case 0: {
+          listTable.innerHTML = renderHtml(todos)
+          break;
+        }
+        case 1: {
+          let listElement = document.getElementById('taskTable')
+          listElement.innerHTML = ''
+          let activeTodos = todos.filter(isActive)
+          listElement.innerHTML = renderHtml(activeTodos)
+          break;
+        }
+        case 2: {
+          let listElement = document.getElementById('taskTable')
+          listElement.innerHTML = ''
+          let completedTodos = todos.filter(isCompleted)
+          listElement.innerHTML = renderHtml(completedTodos)
+          break;
+        }
+          defualt: { }
+      }
     })
     .catch(function (err) {
       console.log(err)
     })
 }
-
+function updateCount() {
+  let activeTodos = todos.filter(isActive)
+  document.getElementById('count-items').innerHTML = `${activeTodos.length} items`
+}
 function updateAll() {
-  let statusAll;
+  let statusAll
   let listElement = document.getElementById('taskTable')
   statusAll = todos.every(istrue)
   if (statusAll == true) {
@@ -197,12 +242,55 @@ function updateAll() {
     }
   })
     .then(() => {
-      listElement.innerHTML=''
-      todos.forEach((task)=>{
-        listElement.innerHTML += addToHtml(task)
-      })
-
+      listElement.innerHTML = ''
+      checkflag()
     }
     )
 }
+function filterAll() {
+  flag = 0
+  let listElement = document.getElementById('taskTable')
+  listElement.innerHTML = ''
+  listElement.innerHTML = renderHtml(todos)
+  updateCount()
 
+}
+function isActive(obj) {
+  return obj.status == false;
+}
+
+function isCompleted(obj) {
+  return obj.status == true;
+}
+
+function filterActive() {
+  flag = 1
+  let listElement = document.getElementById('taskTable')
+  listElement.innerHTML = ''
+  let activeTodos = todos.filter(isActive)
+  listElement.innerHTML = renderHtml(activeTodos)
+  updateCount()
+}
+function filterCompleted() {
+  flag = 2
+  let listElement = document.getElementById('taskTable')
+  listElement.innerHTML = ''
+  let completedTodos = todos.filter(isCompleted)
+  listElement.innerHTML = renderHtml(completedTodos)
+  console.log(completedTodos)
+  updateCount()
+}
+function clearAll(){
+  fetch(`/destroyAll`, { method: 'delete' })
+    .then(() => {
+      var updatedTodos=[]
+      todos.forEach((element)=>{
+        if(element.status === false)
+          updatedTodos.push(element)
+      })
+      todos = updatedTodos
+    checkflag()
+    updateCount()
+  })
+  .catch((err)=>console.log(err))
+}

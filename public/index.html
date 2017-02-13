@@ -1,151 +1,13 @@
 <html>
-
 <head>
-  <style>
-    body {
-      font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      background: #f5f5f5;
-      color: #4d4d4d;
-      font-weight: 300;
-    }
-    
-    h1 {
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      position: absolute;
-      width: 100%;
-      font-size: 100px;
-      font-weight: 100;
-      text-align: center;
-      color: rgba(175, 47, 47, 0.15);
-    }
-    
-    .btn {
-      visibility: hidden;
-      border: none;
-      background: transparent;
-    }
-    
-    tr:hover .btn {
-      visibility: visible;
-    }
-    
-    #taskTable {
-      border-collapse: collapse;
-      width: 50%;
-      align-content: center;
-      align-self: center;
-      margin-top: 10px;
-    }
-    
-    th,
-    td {
-      text-align: left;
-      padding: 8px;
-    }
-    
-    .desc-design {
-      width: 80%;
-      padding: 12px 20px;
-      margin: 8px 0;
-      border: none;
-      font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      font-size: 20px;
-      font-weight: 150;
-      color: rgb(77, 77, 77)
-    }
-    
-    .striked {
-      color: #d9d9d9;
-      text-decoration: line-through;
-    }
-    
-    #data,
-    #lineNumber,
-    #desc {
-      width: 80%;
-      margin-top: 20px;
-      border: 0;
-      outline: 0;
-      background: transparent;
-      font-size: 25px;
-      margin-bottom: -20px;
-      padding-bottom: 25px;
-      font-style: italic;
-      font-weight: 100;
-    }
-    
-    input::-webkit-input-placeholder {
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      font-weight: 100;
-      font-size: 24px;
-      line-height: 3;
-    }
-    
-    td.checked {
-      background: #888;
-      color: #fff;
-      text-decoration: line-through;
-    }
-    
-    #descTable {
-      width: 100%;
-      padding: 12px 20px;
-      display: inline-block;
-      border: none;
-      box-sizing: border-box;
-    }
-    
-    #container {
-      margin-top: 160px;
-      background-color: #fff;
-      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 25px 50px 0 rgba(0, 0, 0, 0.1);
-      width: 35%;
-      min-width: 400px;
-      min-height: 300px;
-    }
-  
-    hr {
-      width: 100%;
-      border-color: #ffffff;
-      margin-top: -10px;
-    }
-    
-    button,
-    input[type=button] {
-      background-color: white;
-      border: none;
-      color: black;
-      padding: 15px 20px;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 10px;
-    }
-    
-    tr.border-bottom td {
-      border-bottom: 1pt solid #D3D3D3;
-    }
-    
-    p {
-      display: block;
-      -webkit-margin-before: 1em;
-      -webkit-margin-after: 1em;
-      -webkit-margin-start: 0px;
-      -webkit-margin-end: 0px;
-      color: #bfbfbf;
-      font-size: 10px;
-      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
-      text-align: center;
-    }
-  </style>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <center>
-
   <body onload="outputList()">
     <h1>todos</h1><br><br>
     <div id='container'>
       <div>
-        <button onclick="updateAll()" type="button">🔽</button>
+        <button onclick="updateAll()" type="button"><img src="images/arrow.png" height="2%" /></button>
         <input type="text" name="data" id="data" placeholder="What do you want to do?">
       </div>
       <br>
@@ -153,6 +15,13 @@
       <table style="width:100%" id="taskTable">
       </table>
       <br>
+      <footer>
+        <span id="count-items"></span>
+        <button id="button-all" onclick="filterAll()">All</button>
+        <button id="button-active" onclick="filterActive()">Active</button>
+        <button id="button-comp" onclick="filterCompleted()">Completed</button>
+        <button id="button-clear" onclick="clearAll()">Clear Completed</button>
+      </footer>
     </div><br><br><br>
     <p>Double Click on task to change details</p>
     <p>Click on checkbox to change status</p>
@@ -160,5 +29,4 @@
   </body>
 </center>
 <script src="apiFetch.js"></script>
-
 </html>

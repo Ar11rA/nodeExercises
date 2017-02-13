@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const {addToDb, displayData, updateDb, deleteFromDb, updateDbAll} = require('./databaseFunctions')
+const {addToDb, displayData, updateDb, deleteFromDb, updateDbAll, deleteAllChecked} = require('./databaseFunctions')
 app.use(express.static('public'))
 const bodyParser = require('body-parser')
 app.use(bodyParser.urlencoded({
@@ -46,7 +46,18 @@ app.delete('/destroy/:id', function (req, response) {
   })
   delId.catch(() => response.sendStatus(500))
 })
-
+app.delete('/destroyAll', function (req, response) {
+  const id = req.params.id
+  if (id < 0) response.sendStatus(500)
+  const delId = deleteAllChecked()
+  delId.then((data) => {
+    if (data[1].rowCount === 0)
+      response.send('No such row to delete')
+    else
+      response.send('Data Deleted')
+  })
+  delId.catch(() => response.sendStatus(500))
+})
 app.put('/updateAll/:status', function (req, response) {
   const statusAll = req.params.status
   const updData = updateDbAll(statusAll)

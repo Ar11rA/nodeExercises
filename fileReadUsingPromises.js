@@ -1,5 +1,4 @@
 const fs = require('fs')
-const inputPath = '/Users/aritraaritra/Documents/nodeExercises/README.md'
 readFileAsync = function (inputPath) {
   return new Promise(function (resolve, reject) {
     fs.readFile(inputPath, 'utf-8', function (err, data) {
@@ -10,12 +9,13 @@ readFileAsync = function (inputPath) {
     })
   })
 }
-readFileAsync(inputPath)
-  .then((data) => {
-    console.log(data)
-  })
-  .catch((error) => {
-    console.error(error)
-  })
+module.exports = readFileAsync;
+// readFileAsync(inputPath)
+//   .then((data) => {
+//     console.log(data)
+//   })
+//   .catch((error) => {
+//     console.error(error)
+//   })
 
 // NOTE - ANOTHER IMPLEMENTATION -- readFileAsync = new Promise(function (resolve, reject) { 

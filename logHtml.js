@@ -1,8 +1,10 @@
 const axios = require('axios')
-const getGoogle = () => axios.get('https://olafarefinder.com/estimate/Marathahalli,%20Bengaluru,%20Karnataka,%20India/Whitefield,%20Bengaluru,%20Karnataka,%20India')
+const fileWrite = require('./fileWrite')
+const inputPath = '/Users/aritraaritra/Documents/nodeExercises/cab.txt'
+const getGoogle = () => axios.get('https://ride.guru')
 getGoogle()
   .then((response) => {
-    console.log('Cab: ' + response.data)
+    fileWrite(inputPath, response.toString())
   })
   .catch((error) => {
     console.log(error)
