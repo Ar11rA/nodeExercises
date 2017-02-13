@@ -1,26 +1,27 @@
 <html>
+
 <head>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <center>
+
   <body onload="outputList()">
     <h1>todos</h1><br><br>
     <div id='container'>
-      <div>
-        <button onclick="updateAll()" type="button"><img src="images/arrow.png" height="2%" /></button>
+      <div id='header'>
+        <button class="button-image" onclick="updateAll()" type="button"><img src="images/arrow.png" height="2%" /></button>
         <input type="text" name="data" id="data" placeholder="What do you want to do?">
       </div>
-      <br>
-      <hr>
+      <!--hr-->
       <table style="width:100%" id="taskTable">
       </table>
-      <br>
-      <footer>
+
+      <footer class="footer">
         <span id="count-items"></span>
-        <button id="button-all" onclick="filterAll()">All</button>
-        <button id="button-active" onclick="filterActive()">Active</button>
-        <button id="button-comp" onclick="filterCompleted()">Completed</button>
-        <button id="button-clear" onclick="clearAll()">Clear Completed</button>
+        <a href="#/" id="all" class="selected" onclick="filterAll()">All</a>
+        <a href="#/active" id="active"  onclick="filterActive()">Active</a>
+        <a href="#/completed" id="completed" onclick="filterCompleted()">Completed</a>
+        <button class="footerbutton" id="button-clear" onclick="clearAll()">Clear Completed</button>
       </footer>
     </div><br><br><br>
     <p>Double Click on task to change details</p>
@@ -29,4 +30,5 @@
   </body>
 </center>
 <script src="apiFetch.js"></script>
+
 </html>
