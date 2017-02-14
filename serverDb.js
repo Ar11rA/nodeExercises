@@ -7,6 +7,10 @@ app.use(bodyParser.urlencoded({
   extended: false
 }))
 app.use(bodyParser.json())
+app.get('/test', function (req, res) {
+  res.render('public/test')
+})
+
 app.get('/read', function (req, response) {
   const disp = displayData()
   disp.then((tasks) => {
@@ -42,7 +46,7 @@ app.delete('/destroy/:id', function (req, response) {
     if (data[1].rowCount === 0)
       response.send('No such row to delete')
     else
-      response.send('Data Deleted')
+      response.send('Data deleted')
   })
   delId.catch(() => response.sendStatus(500))
 })

@@ -1,0 +1,21 @@
+{
+  "name": "Test",
+  "description": "",
+  "main": "index.js",
+  "authors": [
+    "Ar11rA <aritra.ghosh2295@yahoo.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/Ar11rA/nodeExercises",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0"
+  }
+}

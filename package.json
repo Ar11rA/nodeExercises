@@ -1,5 +1,5 @@
 {
-  "name": "nodeexercisesß",
+  "name": "nodeexercises",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -18,6 +18,9 @@
   "homepage": "https://github.com/Ar11rA/nodeExercises#readme",
   "dependencies": {
     "axios": "^0.15.3",
+    "bower": "^1.8.0",
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0",
     "pg": "^6.1.2",
     "pg-hstore": "^2.3.2",
     "sequelize": "^3.30.1"

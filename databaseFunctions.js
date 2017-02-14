@@ -1,8 +1,8 @@
 const Sequelize = require('sequelize')
 const sequelize = new Sequelize('postgres://aritraaritra:@localhost:5432/apidb')
 
-function addToDb(description) {
-  let insertDb = sequelize.query(`insert into tasks values (\'${description}\',false) returning id`, { raw: true, type: 'insert' })
+function addToDb(descriptionInp) {
+  let insertDb = sequelize.query(`INSERT INTO TASKS (DESCRIPTION,STATUS) VALUES (:description,'false') RETURNING ID`, { replacements: { description: descriptionInp }, type: sequelize.QueryTypes.SELECT })
   return insertDb
 }
 
@@ -60,7 +60,7 @@ module.exports = {
 // const upd = updateDb(1,'taskchange',true)
 // upd.then(()=>console.log('ok upd'))
 // upd.catch((err)=>console.log(err))
-// const del = deleteFromDb(3)
-//  del.then(()=>console.log('ok del'))
+// const del = deleteFromDb(475)
+//  del.then((data)=>console.log(data))
 // const display = displayData();
 // display.then((tasks)=>console.log(tasks))

@@ -8,6 +8,7 @@ let entityMap = {
   '`': '&#x60;',
   '=': '&#x3D;'
 };
+let todos = []
 function escapeHtml(string) {
   return String(string).replace(/[&<>"'`=\/]/g, function (s) {
     return entityMap[s];
@@ -17,6 +18,14 @@ let flag
 let idMap = []
 function enableText(obj) {
   obj.readOnly = ""
+  obj.style.border = '1px solid #999'
+  obj.style.boxShadow = 'inset 0 -1px 3px rgba(0, 0, 0, 0.2)'
+  obj.style.outline = 'none'
+  let id = parseInt(obj.id)
+  let chk = document.getElementById(`${id}-chk`)
+  let btn = document.getElementById(`${id}-btn`)
+  chk.style.visibility = 'hidden'
+  btn.style.visibility = 'hidden'
 }
 function renderHtml(todos) {
   let htmlString = ''
@@ -36,12 +45,12 @@ function addToHtml(task) {
         </td>
         <td>
         <button class="btn" id="${task.id}-btn" type="button" onclick="deleteTask
-        (${task.id})">❌</button>
+        (${task.id})">×</button>
         </td>
         </tr>`
   return string
 }
-let todos = []
+
 function istrue(obj) {
   return (obj.status == true)
 }
@@ -77,7 +86,8 @@ function outputList() {
         let checked = task.status == true ? 'checked' : null
         idMap[index] = task.id
       })
-      console.log(todos)
+      if (todos.length === 0)
+        document.getElementsByClassName('footer')[0].style.visibility = 'hidden';
       checkflag()
       updateCount()
     })
@@ -97,12 +107,12 @@ document.getElementById('data').onkeydown = function (e) {
         id = text[0].id
         let objLength = todos.length
         let obj = { id, description, status }
-        todos[objLength] = obj
+        todos.push(obj)
         console.log(todos)
         checkflag()
         updateCount()
-        if(todos.length > 0)
-        document.getElementsByClassName('footer')[0].style.visibility = 'visible';
+        if (todos.length > 0)
+          document.getElementsByClassName('footer')[0].style.visibility = 'visible';
       })
       .catch(function (err) {
         console.log(err)
@@ -116,22 +126,23 @@ function deleteTask(id) {
   let description = document.getElementById(`${id}-desc`).value
   let statusBool = document.getElementById(`${id}-chk`).value
   let taskObj = {
-    id, description, statusBool
+    id, description, status: statusBool
   }
   fetch(`/destroy/${id}`, { method: 'delete' })
     .then(() => {
       let delId
-      let newObj=[]
-      idMap.forEach((element, index) => {
-        if (element == id) {
+      todos.forEach((todo, index) => {
+        if (todo.id === id) {
           delId = index
         }
-         })
-        todos.splice(delId,1)
-        console.log(todos.length,'sdgsdgdf')
-      if(todos.length === 0)
+      })
+      console.log(delId)
+      todos.splice(delId, 1)
+      console.log(todos)
+      if (todos.length === 0)
         document.getElementsByClassName('footer')[0].style.visibility = 'hidden';
       updateCount()
+      checkCompleted()
       listElement.parentNode.removeChild(listElement)
     })
     .catch(function (err) {
@@ -142,13 +153,16 @@ function updateList(id) {
   let listElement = document.getElementById(`${id}-desc-status`)
   let description = document.getElementById(`${id}-desc`).value
   let statusBool = document.getElementById(`${id}-chk`).value
-  let index = todos.findIndex(x => x.id == id)
+  let index = todos.findIndex(x => x.id === id)
   let checked = status == true ? 'checked' : null
   let taskObj = {
-    id, description, statusBool
+    id, description, status: statusBool
   }
   console.log(index)
-  todos[index].description = description
+  if (description == '') {
+    deleteTask(id)
+    return;
+  }
   let data = {
     description: description,
   }
@@ -160,8 +174,9 @@ function updateList(id) {
     }
   })
     .then(() => {
+      todos[index].description = description
       checkflag()
-      updateCount() 
+      updateCount()
     })
     .catch(function (err) {
       console.log(err)
@@ -195,6 +210,7 @@ function updateStatus(id) {
       updateCount()
       switch (flag) {
         case 0: {
+          checkCompleted()
           listTable.innerHTML = renderHtml(todos)
           break;
         }
@@ -202,6 +218,7 @@ function updateStatus(id) {
           let listElement = document.getElementById('taskTable')
           listElement.innerHTML = ''
           let activeTodos = todos.filter(isActive)
+          checkCompleted()
           listElement.innerHTML = renderHtml(activeTodos)
           break;
         }
@@ -209,6 +226,7 @@ function updateStatus(id) {
           let listElement = document.getElementById('taskTable')
           listElement.innerHTML = ''
           let completedTodos = todos.filter(isCompleted)
+          checkCompleted()
           listElement.innerHTML = renderHtml(completedTodos)
           break;
         }
@@ -248,6 +266,7 @@ function updateAll() {
     .then(() => {
       listElement.innerHTML = ''
       checkflag()
+      checkCompleted()
     }
     )
 }
@@ -255,6 +274,7 @@ function filterAll() {
   flag = 0
   let listElement = document.getElementById('taskTable')
   listElement.innerHTML = ''
+  checkCompleted()
   listElement.innerHTML = renderHtml(todos)
   document.getElementById('all').className = "selected";
   document.getElementById('active').className = "";
@@ -278,6 +298,7 @@ function filterActive() {
   document.getElementById('all').className = "";
   document.getElementById('active').className = "selected";
   document.getElementById('completed').className = "";
+  checkCompleted()
   listElement.innerHTML = renderHtml(activeTodos)
   updateCount()
 }
@@ -286,6 +307,7 @@ function filterCompleted() {
   let listElement = document.getElementById('taskTable')
   listElement.innerHTML = ''
   let completedTodos = todos.filter(isCompleted)
+  checkCompleted()
   listElement.innerHTML = renderHtml(completedTodos)
   console.log(completedTodos)
   document.getElementById('all').className = "";
@@ -293,19 +315,34 @@ function filterCompleted() {
   document.getElementById('completed').className = "selected";
   updateCount()
 }
-function clearAll(){
+function clearAll() {
   fetch(`/destroyAll`, { method: 'delete' })
     .then(() => {
-      var updatedTodos=[]
-      todos.forEach((element)=>{
-        if(element.status === false)
+      var updatedTodos = []
+      todos.forEach((element) => {
+        if (element.status === false)
           updatedTodos.push(element)
       })
       todos = updatedTodos
-      if(todos.length === 0)
+      if (todos.length === 0)
         document.getElementsByClassName('footer')[0].style.visibility = 'hidden';
-    checkflag()
-    updateCount()
+      checkflag()
+      updateCount()
+    })
+    .catch((err) => console.log(err))
+}
+
+function checkCompleted() {
+  let check = false
+  todos.forEach((obj) => {
+    if (obj.status === true) {
+      check = true
+    }
   })
-  .catch((err)=>console.log(err))
+  if (check) {
+    document.getElementById('button-clear').style.visibility = 'visible'
+  } else {
+    document.getElementById('button-clear').style.visibility = 'hidden'
+  }
+  return
 }
