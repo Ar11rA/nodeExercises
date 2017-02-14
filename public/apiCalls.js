@@ -8,7 +8,6 @@ let entityMap = {
   '`': '&#x60;',
   '=': '&#x3D;'
 };
-let todos = []
 function escapeHtml(string) {
   return String(string).replace(/[&<>"'`=\/]/g, function (s) {
     return entityMap[s];
@@ -20,10 +19,10 @@ function read() {
 function write(description){
   return fetch(`/write/${description}`, { method: 'post' })
 }
-function deleteTask(id){
+function deleteTasks(id){
   return  fetch(`/destroy/${id}`, { method: 'delete' })
 }
-function updateDescription(id,description){
+function updateTaskDescription(id,description){
   let data = {
     description: description,
   }
@@ -35,7 +34,7 @@ function updateDescription(id,description){
     }
   })
 }
-function updateStatus(id,status){
+function updateTaskStatus(id,status){
   let data = {
     status: status
   }
@@ -47,16 +46,16 @@ function updateStatus(id,status){
     }
   })
 }
-function updateAllTasks(status)
+function updateAllTasksStatus(status)
 {
-  return fetch(`updateAll/${statusAll}`, {
+  return fetch(`updateAll/${status}`, {
     method: 'put',
     headers: {
       "Content-type": "application/json"
     }
   })
 }
-function clearAllTasks()
+function clearAllTasksTable()
 {
   return  fetch(`/destroyAll`, { method: 'delete' })
 }

@@ -44,7 +44,7 @@ describe('when write operation is performed', function () {
 })
 describe('when delete operation is performed', function () {
   it('should return a proper message showing that task is deleted', function (done) {
-    let delFunction = deleteTask(511)
+    let delFunction = deleteTasks(511)
     delFunction.then((response) => {
       console.log(response)
       return response.text()
@@ -57,7 +57,7 @@ describe('when delete operation is performed', function () {
     .catch((err)=>done(err))
 })
 it('should return a error message showing that no task is there to deleted', function (done) {
-    let delFunction = deleteTask(400)
+    let delFunction = deleteTasks(400)
     delFunction.then((response) => {
       console.log(response)
       return response.text()
@@ -73,7 +73,7 @@ it('should return a error message showing that no task is there to deleted', fun
 
 describe('when status operation is performed and valid id is given',function(){
   it('should return id when only status is updated',function(done){
-    let updStatus = updateStatus(497, true)
+    let updStatus = updateTaskStatus(497, true)
     updStatus.then((response)=>
     {
       return response.json()
@@ -85,7 +85,7 @@ describe('when status operation is performed and valid id is given',function(){
     .catch((err)=>done(err))
   })
    it('should return id when only description is updated',function(done){
-    let updDesc = updateDescription(497, 'something different')
+    let updDesc = updateTaskDescription(497, 'something different')
     updDesc.then((response)=>
     {
       return response.json()
@@ -101,7 +101,7 @@ describe('when status operation is performed and valid id is given',function(){
 
 describe('when status operation is performed and invalid id is given',function(){
   it('should return status code 500 when only status is updated',function(done){
-    let updStatus = updateStatus(49, true)
+    let updStatus = updateTaskStatus(49, true)
     updStatus.then((response)=>
     {
       return response.json()
@@ -114,7 +114,7 @@ describe('when status operation is performed and invalid id is given',function()
     .catch((err)=>done(err))
   })
    it('should return status code 500 when only description is updated',function(done){
-    let updDesc = updateDescription(47, 'something different')
+    let updDesc = updateTaskDescription(47, 'something different')
     updDesc.then((response)=>
     {
       return response.json()

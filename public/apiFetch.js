@@ -1,59 +1,12 @@
-let entityMap = {
-  '&': '&amp;',
-  '<': '&lt;',
-  '>': '&gt;',
-  '"': '&quot;',
-  "'": '&#39;',
-  '/': '&#x2F;',
-  '`': '&#x60;',
-  '=': '&#x3D;'
-};
+document.getElementById('all').addEventListener('click',filterAll)
+document.getElementById('active').addEventListener('click',filterActive)
+document.getElementById('completed').addEventListener('click',filterCompleted)
+document.getElementById('button-clear').addEventListener('click',clearAll)
+document.getElementById('button-all').addEventListener('click',updateAll)
 let todos = []
-function escapeHtml(string) {
-  return String(string).replace(/[&<>"'`=\/]/g, function (s) {
-    return entityMap[s];
-  });
-}
+document.getElementById('loading').onload = outputList()
 let flag
 let idMap = []
-function enableText(obj) {
-  obj.readOnly = ""
-  obj.style.border = '1px solid #999'
-  obj.style.boxShadow = 'inset 0 -1px 3px rgba(0, 0, 0, 0.2)'
-  obj.style.outline = 'none'
-  let id = parseInt(obj.id)
-  let chk = document.getElementById(`${id}-chk`)
-  let btn = document.getElementById(`${id}-btn`)
-  chk.style.visibility = 'hidden'
-  btn.style.visibility = 'hidden'
-}
-function renderHtml(todos) {
-  let htmlString = ''
-  todos.forEach((task) => {
-    htmlString += addToHtml(task)
-  })
-  return htmlString
-}
-function addToHtml(task) {
-  let checked = task.status == true ? 'checked' : null
-  let string = `<tr class="border-bottom" id='${task.id}-desc-status'>
-        <td>
-        <input type="checkbox" id="${task.id}-chk" class = "toggle" value="${task.status}" onchange="updateStatus(${task.id})" ${checked}>
-        </td>
-        <td>
-        <input class="desc-design ${checked ? 'striked' : ''} " type='text' id='${task.id}-desc' value='${task.description}'  readonly="true" ondblclick="enableText(this)" onfocusout='updateList(${task.id})' ></input>
-        </td>
-        <td>
-        <button class="btn" id="${task.id}-btn" type="button" onclick="deleteTask
-        (${task.id})">×</button>
-        </td>
-        </tr>`
-  return string
-}
-
-function istrue(obj) {
-  return (obj.status == true)
-}
 function checkflag() {
   console.log(todos.length)
   if (flag === 0) {
@@ -64,10 +17,9 @@ function checkflag() {
     filterCompleted()
   }
 }
-
 function outputList() {
-  return fetch('/read', { method: 'get' })
-    .then(function (response) {
+  let readFn = read()
+   readFn.then(function (response) {
       return response.json()
     })
     .then((tasks) => {
@@ -99,10 +51,10 @@ document.getElementById('data').onkeydown = function (e) {
   if (e.keyCode === 13) {
     let description = document.getElementById('data').value
     let status = false
-    fetch(`/write/${description}`, { method: 'post' })
-      .then((response) => {
-        return response.json()
-      })
+    let writeFn = write(description)
+    writeFn.then((response) => {
+      return response.json()
+    })
       .then((text) => {
         id = text[0].id
         let objLength = todos.length
@@ -128,23 +80,23 @@ function deleteTask(id) {
   let taskObj = {
     id, description, status: statusBool
   }
-  fetch(`/destroy/${id}`, { method: 'delete' })
-    .then(() => {
-      let delId
-      todos.forEach((todo, index) => {
-        if (todo.id === id) {
-          delId = index
-        }
-      })
-      console.log(delId)
-      todos.splice(delId, 1)
-      console.log(todos)
-      if (todos.length === 0)
-        document.getElementsByClassName('footer')[0].style.visibility = 'hidden';
-      updateCount()
-      checkCompleted()
-      listElement.parentNode.removeChild(listElement)
+  let destroyId = deleteTasks(id)
+  destroyId.then(() => {
+    let delId
+    todos.forEach((todo, index) => {
+      if (todo.id === id) {
+        delId = index
+      }
     })
+    console.log(delId)
+    todos.splice(delId, 1)
+    console.log(todos)
+    if (todos.length === 0)
+      document.getElementsByClassName('footer')[0].style.visibility = 'hidden';
+    updateCount()
+    checkCompleted()
+    listElement.parentNode.removeChild(listElement)
+  })
     .catch(function (err) {
       console.log(err)
     })
@@ -158,26 +110,16 @@ function updateList(id) {
   let taskObj = {
     id, description, status: statusBool
   }
-  console.log(index)
   if (description == '') {
     deleteTask(id)
     return;
   }
-  let data = {
-    description: description,
-  }
-  fetch(`/update/${id}`, {
-    method: 'put',
-    body: JSON.stringify(data),
-    headers: {
-      "Content-type": "application/json"
-    }
+  let updateDescFn = updateTaskDescription(id, description)
+  updateDescFn.then(() => {
+    todos[index].description = description
+    checkflag()
+    updateCount()
   })
-    .then(() => {
-      todos[index].description = description
-      checkflag()
-      updateCount()
-    })
     .catch(function (err) {
       console.log(err)
     })
@@ -195,44 +137,12 @@ function updateStatus(id) {
   }
   todos[index].status = status
   todos[index].description = description
-  let data = {
-    status: status
-  }
-  fetch(`/update/${id}`, {
-    method: 'put',
-    body: JSON.stringify(data),
-    headers: {
-      "Content-type": "application/json"
-    }
+  let updateFn = updateTaskStatus(id, status)
+  updateFn.then(() => {
+    listElement.innerHTML = addToHtml(taskObj)
+    updateCount()
+    checkflag()
   })
-    .then(() => {
-      listElement.innerHTML = addToHtml(taskObj)
-      updateCount()
-      switch (flag) {
-        case 0: {
-          checkCompleted()
-          listTable.innerHTML = renderHtml(todos)
-          break;
-        }
-        case 1: {
-          let listElement = document.getElementById('taskTable')
-          listElement.innerHTML = ''
-          let activeTodos = todos.filter(isActive)
-          checkCompleted()
-          listElement.innerHTML = renderHtml(activeTodos)
-          break;
-        }
-        case 2: {
-          let listElement = document.getElementById('taskTable')
-          listElement.innerHTML = ''
-          let completedTodos = todos.filter(isCompleted)
-          checkCompleted()
-          listElement.innerHTML = renderHtml(completedTodos)
-          break;
-        }
-          defualt: { }
-      }
-    })
     .catch(function (err) {
       console.log(err)
     })
@@ -240,6 +150,9 @@ function updateStatus(id) {
 function updateCount() {
   let activeTodos = todos.filter(isActive)
   document.getElementById('count-items').innerHTML = `${activeTodos.length} items`
+}
+function istrue(obj) {
+  return (obj.status == true)
 }
 function updateAll() {
   let statusAll
@@ -257,18 +170,13 @@ function updateAll() {
       element.status = true;
     })
   }
-  fetch(`updateAll/${statusAll}`, {
-    method: 'put',
-    headers: {
-      "Content-type": "application/json"
-    }
-  })
-    .then(() => {
-      listElement.innerHTML = ''
-      checkflag()
-      checkCompleted()
-    }
-    )
+  let updateAllStatus = updateAllTasksStatus(statusAll)
+  updateAllStatus.then(() => {
+    listElement.innerHTML = ''
+    checkflag()
+    checkCompleted()
+  }
+  )
 }
 function filterAll() {
   flag = 0
@@ -316,22 +224,21 @@ function filterCompleted() {
   updateCount()
 }
 function clearAll() {
-  fetch(`/destroyAll`, { method: 'delete' })
-    .then(() => {
-      var updatedTodos = []
-      todos.forEach((element) => {
-        if (element.status === false)
-          updatedTodos.push(element)
-      })
-      todos = updatedTodos
-      if (todos.length === 0)
-        document.getElementsByClassName('footer')[0].style.visibility = 'hidden';
-      checkflag()
-      updateCount()
+  let deleteAll = clearAllTasksTable()
+  deleteAll.then(() => {
+    var updatedTodos = []
+    todos.forEach((element) => {
+      if (element.status === false)
+        updatedTodos.push(element)
     })
+    todos = updatedTodos
+    if (todos.length === 0)
+      document.getElementsByClassName('footer')[0].style.visibility = 'hidden';
+    checkflag()
+    updateCount()
+  })
     .catch((err) => console.log(err))
 }
-
 function checkCompleted() {
   let check = false
   todos.forEach((obj) => {
