@@ -29,7 +29,7 @@ function outputList() {
       tasks.forEach((task, index) => {
         todos[index] = {
           id: task.id,
-          description: task.description,
+          description:task.description,
           status: task.status
         }
         let id = escapeHtml(index + 1)
@@ -49,7 +49,7 @@ function outputList() {
 }
 document.getElementById('data').onkeydown = function (e) {
   if (e.keyCode === 13) {
-    let description = document.getElementById('data').value
+    let description = escapeHtml(document.getElementById('data').value)
     let status = false
     let writeFn = write(description)
     writeFn.then((response) => {
@@ -103,7 +103,7 @@ function deleteTask(id) {
 }
 function updateList(id) {
   let listElement = document.getElementById(`${id}-desc-status`)
-  let description = document.getElementById(`${id}-desc`).value
+  let description = escapeHtml(document.getElementById(`${id}-desc`).value)
   let statusBool = document.getElementById(`${id}-chk`).value
   let index = todos.findIndex(x => x.id === id)
   let checked = status == true ? 'checked' : null
@@ -193,11 +193,9 @@ function filterAll() {
 function isActive(obj) {
   return obj.status == false;
 }
-
 function isCompleted(obj) {
   return obj.status == true;
 }
-
 function filterActive() {
   flag = 1
   let listElement = document.getElementById('taskTable')

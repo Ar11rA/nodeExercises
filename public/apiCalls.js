@@ -6,23 +6,30 @@ let entityMap = {
   "'": '&#39;',
   '/': '&#x2F;',
   '`': '&#x60;',
-  '=': '&#x3D;'
+  '=': '&#x3D;',
+  '\\': '&#92;'
 };
 function escapeHtml(string) {
-  return String(string).replace(/[&<>"'`=\/]/g, function (s) {
+  return String(string).replace(/[&<>"'`=\/\\]/g, function (s) {
     return entityMap[s];
   });
 }
 function read() {
   return fetch('/read', { method: 'get' })
 }
-function write(description){
-  return fetch(`/write/${description}`, { method: 'post' })
+function write(description) {
+  if (description) {
+    return fetch(`/write/${description}`, { method: 'post' })
+  }
+  return 'No Description given'
 }
-function deleteTasks(id){
-  return  fetch(`/destroy/${id}`, { method: 'delete' })
+function deleteTasks(id) {
+  if (id)
+    return fetch(`/destroy/${id}`, { method: 'delete' })
+  else
+    return 'No id given'
 }
-function updateTaskDescription(id,description){
+function updateTaskDescription(id, description) {
   let data = {
     description: description,
   }
@@ -34,7 +41,7 @@ function updateTaskDescription(id,description){
     }
   })
 }
-function updateTaskStatus(id,status){
+function updateTaskStatus(id, status) {
   let data = {
     status: status
   }
@@ -46,16 +53,18 @@ function updateTaskStatus(id,status){
     }
   })
 }
-function updateAllTasksStatus(status)
-{
-  return fetch(`updateAll/${status}`, {
-    method: 'put',
-    headers: {
-      "Content-type": "application/json"
-    }
-  })
+function updateAllTasksStatus(status) {
+  if (typeof (status) === 'boolean') {
+    return fetch(`/updateAll/${status}`, {
+      method: 'put',
+      headers: {
+        "Content-type": "application/json"
+      }
+    })
+  }
+  else
+  return 'Status entered is not boolean'
 }
-function clearAllTasksTable()
-{
-  return  fetch(`/destroyAll`, { method: 'delete' })
+function clearAllTasksTable() {
+  return fetch(`/destroyAll`, { method: 'delete' })
 }

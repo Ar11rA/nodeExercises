@@ -164,8 +164,8 @@
    text-align: center;
    text-decoration: none;
    display: inline-block;
-   font-size: 12px;
-   outline: none;
+    font: 12px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    outline: none;
  }
  
  .footerbutton:hover {

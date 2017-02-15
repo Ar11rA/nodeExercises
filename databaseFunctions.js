@@ -1,11 +1,11 @@
 const Sequelize = require('sequelize')
-const sequelize = new Sequelize('postgres://aritraaritra:@localhost:5432/apidb')
+const dbName = process.env.DEV_MODE === 'test' ? 'testdb' : 'apidb'
+const sequelize = new Sequelize('postgres://aritraaritra:@localhost:5432/' + dbName)
 
 function addToDb(descriptionInp) {
   let insertDb = sequelize.query(`INSERT INTO TASKS (DESCRIPTION,STATUS) VALUES (:description,'false') RETURNING ID`, { replacements: { description: descriptionInp }, type: sequelize.QueryTypes.SELECT })
   return insertDb
 }
-
 function displayData() {
   const query = 'select id, description, status from tasks order by id asc'
   const displayDb = sequelize.query(query, { replacements: ['active'], type: sequelize.QueryTypes.SELECT }
@@ -13,19 +13,17 @@ function displayData() {
   return displayDb
 }
 
-function updateDb(id, description, status) {
-  if (!description) {
-    const query = `update tasks set status = '${status}' where id = ${id} returning id `
-    return sequelize.query(query)
+function updateDb(idInp, descriptionInp, statusInp) {
+  if (!descriptionInp) {
+    return sequelize.query(`update tasks set status = :status where id = :id returning id`, { replacements: { status: statusInp, id: idInp }, type: sequelize.QueryTypes.UPDATE })
   }
-  if (status===undefined) {
-    const query = `update tasks set description = '${description}' where id = ${id} returning id`
-    return sequelize.query(query)
+  if (statusInp === undefined) {
+    return sequelize.query(`update tasks set description = :description where id = :id returning id`, { replacements: { description: descriptionInp, id: idInp }, type: sequelize.QueryTypes.UPDATE })
   }
-  const query = `update tasks set description = '${description}', status = '${status}' where id = ${id} returning id`
-  return sequelize.query(query)
-
+  const query = `update tasks set description = :description, status = :status where id = :idInp returning id`
+  return sequelize.query(query, { replacements: { description: descriptionInp, id: idInp }, type: sequelize.QueryTypes.UPDATE })
 }
+
 
 function deleteFromDb(id) {
   const query = `delete from tasks where id = ${id} returning id`
