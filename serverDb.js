@@ -19,8 +19,13 @@ app.get('/read', function (req, response) {
 })
 app.post('/write/:message', function (req, response) {
   const data = req.params.message
+  if(data === null){
+    response.sendStatus(500)
+    return
+  }
   if (!data) {
     response.sendStatus(500)
+    return
   }
   const addData = addToDb(data)
   addData.then((id) => response.send(id))
@@ -30,6 +35,14 @@ app.put('/update/:id', function (req, response) {
   const id = req.params.id
   if (id < 0) {
     response.sendStatus(500)
+  }
+  if (isNaN(id)) {
+    response.sendStatus(500)
+    return
+  }
+  if (id == null) {
+    response.sendStatus(500)
+    return
   }
   const description = req.body.description
   const status = req.body.status
@@ -41,6 +54,14 @@ app.put('/update/:id', function (req, response) {
 app.delete('/destroy/:id', function (req, response) {
   const id = req.params.id
   if (id < 0) response.sendStatus(500)
+  if (isNaN(id)) {
+    response.sendStatus(500)
+    return
+  }
+  if (id == null) {
+    response.sendStatus(500)
+    return
+  }
   const delId = deleteFromDb(id)
   delId.then((data) => {
     if (data[1].rowCount === 0)
@@ -65,7 +86,7 @@ app.delete('/destroyAll', function (req, response) {
 app.put('/updateAll/:status', function (req, response) {
   const statusAll = req.params.status
   const updData = updateDbAll(statusAll)
-  updData.then(() => response.send())
+  updData.then(() => response.send('All tasks updated'))
   updData.catch(() => response.sendStatus(500))
 })
 app.listen(3010)
